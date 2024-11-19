@@ -9,7 +9,7 @@
 #include <vlcal/common/visual_lidar_visualizer.hpp>
 
 #include <guik/viewer/light_viewer.hpp>
-//git test
+
 namespace vlcal {
 
 class Viewer {
