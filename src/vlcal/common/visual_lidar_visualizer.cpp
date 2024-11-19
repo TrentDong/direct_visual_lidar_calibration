@@ -67,12 +67,28 @@ void VisualLiDARVisualizer::ui_callback() {
       cv::resize(dataset[selected_bag_id]->image, canvas, cv::Size(), image_display_scale, image_display_scale);
       cv::imshow("image", canvas);
     } else {
-      cv::Mat bgr;
-      cv::cvtColor(dataset[selected_bag_id]->image, bgr, cv::COLOR_GRAY2BGR);
-      viewer->update_image("image", glk::create_texture(bgr));
+      // cv::Mat bgr;
+      // cv::cvtColor(dataset[selected_bag_id]->image, bgr, cv::COLOR_GRAY2BGR);
+      // viewer->update_image("image", glk::create_texture(bgr));
+      viewer->update_image("image", glk::create_texture(dataset[selected_bag_id]->image));
     }
   }
   ImGui::DragFloat("blend_weight", &blend_weight, 0.01f, 0.0f, 1.0f);
+
+  // 添加按钮来触发彩色点云保存
+  if (ImGui::Button("Save Colored Point Cloud")) {
+    if (color_updater) {
+      try {
+        color_updater->update(T_camera_lidar, blend_weight);  // 确保点云已更新
+        color_updater->save_colored_pointcloud("/home/lcx/ros_slam/bishe/color/output.ply");
+        std::cout << "Colored point cloud saved successfully." << std::endl;
+      } catch (const std::exception& ex) {
+        std::cerr << "Failed to save colored point cloud: " << ex.what() << std::endl;
+      }
+    } else {
+      std::cerr << "Error: color_updater is not initialized." << std::endl;
+    }
+  }
 
   ImGui::End();
 }
